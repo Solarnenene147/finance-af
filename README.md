@@ -1,16 +1,51 @@
-# React + Vite
+# 🔱 AF Finance - Wealth Management System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Banner](https://img.shields.io/badge/Status-Gigachad_Mode-brightgreen?style=for-the-badge&logo=react)
+![Backend](https://img.shields.io/badge/Backend-Node.js_Express-blue?style=for-the-badge&logo=node.js)
+![Database](https://img.shields.io/badge/Database-MongoDB-green?style=for-the-badge&logo=mongodb)
 
-Currently, two official plugins are available:
+> **AF Finance** không chỉ là một ứng dụng quản lý tài chính. Đây là hệ điều hành giúp các "Chad" làm chủ dòng tiền, kỷ luật chi tiêu và chinh phục các mục tiêu tài chính vĩ đại.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## ⚡ Tính Năng Thực Chiến
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Dashboard Command Center**: Tổng quan tài sản với biểu đồ Pie Chart nổi khối, tương tác cực nhạy.
+- **Transactions Log**: Ghi chép thu chi thần tốc, đồng bộ trực tiếp với Backend.
+- **Financial Goals**: Thiết lập mục tiêu, theo dõi tiến độ "tích lúa" với thanh Progress bar thời gian thực.
+- **Ultra Dark/Light Mode**: Giao diện tối thượng, bảo vệ mắt nhưng vẫn cực kỳ sang trọng.
+- **Secure Auth**: Hệ thống đăng nhập/đăng ký chuẩn mực, bảo vệ bí mật tài chính tuyệt đối.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠 Tech Stack (Vũ Khí Sử Dụng)
+
+| Frontend         | Backend     | Công Cụ                           |
+| :--------------- | :---------- | :-------------------------------- |
+| **React 18**     | **Node.js** | **Axios** (API)                   |
+| **Tailwind CSS** | **Express** | **Framer Motion** (Animation)     |
+| **Recharts**     | **MongoDB** | **React Router DOM** (Navigation) |
+
+[Image of MERN stack architecture diagram]
+
+---
+
+## 🚀 Bắt Đầu Ngay (Installation)
+
+### 1. Yêu cầu hệ thống
+
+- Node.js (Phiên bản v16 trở lên)
+- MongoDB (Chạy cục bộ hoặc Atlas)
+
+### 2. Cài đặt Frontend
+
+```bash
+# Di chuyển vào thư mục client
+cd client
+
+# Cài đặt các gói steroid cho code
+npm install
+
+# Khởi động hệ thống
+npm run dev
+```
