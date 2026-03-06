@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg: #f5f7fb;
+  --color-panel: #ffffff;
+
+  --color-text-main: #1e293b;
+  --color-text-sub: #64748b;
+
+  --color-primary: #2563eb;
+
+  --color-income: #16a34a;
+  --color-expense: #dc2626;
+  --color-asset: #d97706;
+}
+
+.dark {
+  --color-bg: #0f172a;
+  --color-panel: #1e293b;
+
+  --color-text-main: #e2e8f0;
+  --color-text-sub: #94a3b8;
+}
