@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { useGlobalContext } from "../context/GlobalContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -48,7 +49,7 @@ const Goals = () => {
   };
 
   return (
-    <div className="flex-1 h-full bg-background p-10 overflow-y-auto relative">
+    <div className="relative flex-1 h-full p-10 overflow-y-auto bg-background">
       {/* THÔNG BÁO THÀNH CÔNG (TOAST) */}
       <AnimatePresence>
         {showToast && (
@@ -68,10 +69,10 @@ const Goals = () => {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-10 flex justify-between items-end"
+        className="flex items-end justify-between mb-10"
       >
         <div>
-          <h2 className="text-4xl font-bold text-textMain tracking-tight uppercase">
+          <h2 className="text-4xl font-bold tracking-tight uppercase text-textMain">
             Mục Tiêu Tài Chính
           </h2>
           <p className="text-textSub mt-1 text-[10px] font-bold tracking-widest uppercase">
@@ -80,14 +81,14 @@ const Goals = () => {
         </div>
         <button
           onClick={() => setIsOverlayOpen(true)}
-          className="bg-primary text-white px-6 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all flex items-center gap-2"
+          className="flex items-center gap-2 px-6 py-4 text-xs font-bold tracking-widest text-white uppercase transition-all shadow-lg bg-primary rounded-2xl shadow-primary/20 hover:scale-105"
         >
           <FaPlus /> Thiết lập mới
         </button>
       </motion.div>
 
       {/* DANH SÁCH GOALS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
         {goals.map((goal) => {
           const progress = Math.min(
             ((goal.current || 0) / goal.target) * 100,
@@ -99,8 +100,8 @@ const Goals = () => {
               layout
               className="bg-panel p-8 rounded-[2.5rem] border border-white/5 shadow-panel-depth"
             >
-              <div className="flex justify-between items-start mb-6">
-                <div className="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center text-xl shadow-inner">
+              <div className="flex items-start justify-between mb-6">
+                <div className="flex items-center justify-center w-12 h-12 text-xl rounded-full shadow-inner bg-primary/10 text-primary">
                   <FaBullseye />
                 </div>
                 <div className="text-right">
@@ -112,7 +113,7 @@ const Goals = () => {
                   </p>
                 </div>
               </div>
-              <h3 className="text-xl font-bold text-textMain mb-4 uppercase tracking-tighter">
+              <h3 className="mb-4 text-xl font-bold tracking-tighter uppercase text-textMain">
                 {goal.title}
               </h3>
               <div className="space-y-4">
@@ -128,7 +129,7 @@ const Goals = () => {
                     className="h-full bg-primary"
                   />
                 </div>
-                <div className="flex justify-between items-end pt-2">
+                <div className="flex items-end justify-between pt-2">
                   <div>
                     <p className="text-[8px] text-textSub uppercase font-bold tracking-tighter">
                       Hiện có
@@ -169,13 +170,13 @@ const Goals = () => {
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               className="relative bg-panel border border-white/5 p-10 rounded-[2.5rem] shadow-2xl max-w-md w-full"
             >
-              <div className="flex justify-between items-center mb-8">
-                <h3 className="text-2xl font-bold text-textMain uppercase tracking-tighter flex items-center gap-3">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="flex items-center gap-3 text-2xl font-bold tracking-tighter uppercase text-textMain">
                   <FaFlagCheckered className="text-primary" /> Mục Tiêu Mới
                 </h3>
                 <button
                   onClick={() => setIsOverlayOpen(false)}
-                  className="text-textSub hover:text-textMain transition-colors"
+                  className="transition-colors text-textSub hover:text-textMain"
                 >
                   <FaXmark className="text-2xl" />
                 </button>
@@ -193,7 +194,7 @@ const Goals = () => {
                     onChange={(e) =>
                       setNewGoal({ ...newGoal, title: e.target.value })
                     }
-                    className="w-full bg-background border border-slate-800 p-4 rounded-2xl outline-none focus:border-primary transition-all font-bold text-textMain"
+                    className="w-full p-4 font-bold transition-all border outline-none bg-background border-slate-800 rounded-2xl focus:border-primary text-textMain"
                   />
                 </div>
                 <div className="space-y-2">
@@ -208,7 +209,7 @@ const Goals = () => {
                     onChange={(e) =>
                       setNewGoal({ ...newGoal, target: e.target.value })
                     }
-                    className="w-full bg-background border border-slate-800 p-4 rounded-2xl outline-none focus:border-primary transition-all font-bold text-textMain"
+                    className="w-full p-4 font-bold transition-all border outline-none bg-background border-slate-800 rounded-2xl focus:border-primary text-textMain"
                   />
                 </div>
                 <div className="space-y-2">
@@ -221,7 +222,7 @@ const Goals = () => {
                     onChange={(e) =>
                       setNewGoal({ ...newGoal, deadline: e.target.value })
                     }
-                    className="w-full bg-background border border-slate-800 p-4 rounded-2xl outline-none focus:border-primary transition-all font-bold text-textMain"
+                    className="w-full p-4 font-bold transition-all border outline-none bg-background border-slate-800 rounded-2xl focus:border-primary text-textMain"
                   />
                 </div>
                 <button

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom"; // Vũ khí điều hướng
 import { FaWallet, FaShieldHalved, FaBoltLightning } from "react-icons/fa6";
@@ -64,11 +65,11 @@ const LandingPage = () => {
   }, [startTimer, stopTimer]);
 
   return (
-    <div className="h-screen w-full bg-background text-textMain flex flex-col items-center justify-center relative overflow-hidden p-6 transition-colors duration-500">
+    <div className="relative flex flex-col items-center justify-center w-full h-screen p-6 overflow-hidden transition-colors duration-500 bg-background text-textMain">
       {/* Hiệu ứng mờ nền cho tinh tế */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]"></div>
 
-      <div className="flex flex-col items-center max-w-sm w-full -mt-12 z-10">
+      <div className="z-10 flex flex-col items-center w-full max-w-sm -mt-12">
         {/* LOGO & BRANDING */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
@@ -76,11 +77,11 @@ const LandingPage = () => {
           transition={{ duration: 0.5 }}
           className="flex flex-col items-center mb-10"
         >
-          <div className="w-24 h-24 bg-panel rounded-full overflow-hidden border-2 border-primary/20 shadow-panel-depth flex items-center justify-center mb-5 group">
+          <div className="flex items-center justify-center w-24 h-24 mb-5 overflow-hidden border-2 rounded-full bg-panel border-primary/20 shadow-panel-depth group">
             <img
               src={logoImg}
               alt="AF"
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
               onError={(e) => {
                 e.target.style.display = "none";
                 e.target.parentNode.innerHTML =
@@ -95,7 +96,7 @@ const LandingPage = () => {
         </motion.div>
 
         {/* SLIDER SECTION */}
-        <div className="w-full h-32 flex items-center justify-center relative mb-6">
+        <div className="relative flex items-center justify-center w-full h-32 mb-6">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentSlide}
@@ -103,9 +104,9 @@ const LandingPage = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
-              className="flex flex-col items-center text-center w-full absolute"
+              className="absolute flex flex-col items-center w-full text-center"
             >
-              <div className="text-3xl text-primary/80 mb-3 drop-shadow-sm">
+              <div className="mb-3 text-3xl text-primary/80 drop-shadow-sm">
                 {slides[currentSlide].icon}
               </div>
 
@@ -137,12 +138,12 @@ const LandingPage = () => {
         </div>
 
         {/* ACTION BUTTONS */}
-        <div className="flex flex-col items-center gap-5 w-full">
+        <div className="flex flex-col items-center w-full gap-5">
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => navigate("/login")} // Điều hướng sang trang Login
-            className="w-full bg-primary text-white font-bold text-sm py-4 rounded-xl shadow-lg shadow-primary/20 transition-all uppercase tracking-widest"
+            className="w-full py-4 text-sm font-bold tracking-widest text-white uppercase transition-all shadow-lg bg-primary rounded-xl shadow-primary/20"
           >
             Tham Gia Ngay
           </motion.button>
