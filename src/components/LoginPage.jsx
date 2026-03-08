@@ -48,7 +48,7 @@ const LoginPage = () => {
 
       toast.success("HỆ THỐNG PHÊ DUYỆT ĐĂNG NHẬP!", {
         icon: "✅",
-        duration: 2500,
+        duration: 200,
         style: {
           borderRadius: "12px",
           fontSize: "12px",
@@ -64,7 +64,7 @@ const LoginPage = () => {
 
       setTimeout(() => {
         navigate("/dashboard");
-      }, 800);
+      }, 200);
     } catch (err) {
       // LOG LỖI THẬT TRONG CONSOLE
       console.error("LOGIN ERROR:", err);
