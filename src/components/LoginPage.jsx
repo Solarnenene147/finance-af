@@ -116,8 +116,8 @@ const LoginPage = () => {
       <Toaster position="top-center" />
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: 20, scale: 1 }}
+        animate={{ opacity: 1, y: 0, scale: 0.9 }}
         // Card được làm border đậm hơn (border-2) và shadow-2xl cực mạnh ở Light mode
         className="w-full max-w-md p-10 bg-white dark:bg-slate-900 rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.2)] dark:shadow-2xl border-2 border-slate-300 dark:border-white/5 relative overflow-hidden transition-all"
       >
