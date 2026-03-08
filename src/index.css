@@ -23,3 +23,34 @@
   --color-text-main: #e2e8f0;
   --color-text-sub: #94a3b8;
 }
+
+/* Custom Scrollbar Gigachad Edition */
+.custom-scrollbar {
+  /* Giúp nội dung không bị nhảy khi thanh cuộn xuất hiện */
+  scrollbar-gutter: stable;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px; /* Giảm xuống 5px cho thanh thoát */
+  height: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  /* Dùng màu nền panel để nó hòa quyện vào mép góc */
+  background: transparent;
+  margin: 10px 0; /* Đẩy đầu thanh cuộn cách mép trên/dưới cho sang */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  /* Sử dụng màu Slate/Primary nhẹ phù hợp cả 2 chế độ */
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 20px;
+  /* Tạo khoảng trống giả bằng border trong suốt để thanh cuộn trông nhỏ và nằm giữa rãnh */
+  border: 1px solid transparent;
+  background-clip: content-box;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+  background-clip: content-box;
+}

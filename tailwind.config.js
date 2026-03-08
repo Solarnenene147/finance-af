@@ -18,7 +18,7 @@ export default {
       },
       fontFamily: {
         sans: ["Inter", "sans-serif"],
-        display: ["Oswald", "sans-serif"],
+        display: ["Inter", "sans-serif"],
       },
 
       boxShadow: {

@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { useGlobalContext } from "../context/GlobalContext";
-import { motion } from "framer-motion";
+// eslint-disable-next-line no-unused-vars
+import { motion, AnimatePresence } from "framer-motion";
 import { FaArrowTrendUp, FaArrowTrendDown, FaPlus } from "react-icons/fa6";
 import {
   PieChart,
@@ -20,12 +21,10 @@ const renderActiveShape = (props) => {
         cx={cx}
         cy={cy}
         innerRadius={innerRadius}
-        outerRadius={outerRadius + 10}
+        outerRadius={outerRadius + 8}
         startAngle={startAngle}
         endAngle={endAngle}
         fill={fill}
-        className="drop-shadow-lg"
-        style={{ cursor: "pointer" }}
       />
     </g>
   );
@@ -34,7 +33,6 @@ const renderActiveShape = (props) => {
 const FinanceDashboard = () => {
   const { transactions, addTransaction } = useGlobalContext();
   const [activeIndex, setActiveIndex] = useState(null);
-
   const [formData, setFormData] = useState({
     text: "",
     amount: "",
@@ -53,85 +51,93 @@ const FinanceDashboard = () => {
     return { income: inc, expense: exp, totalBalance: inc - exp };
   }, [transactions]);
 
-  const chartData = [
-    { name: "Thu nhập", value: income || 0.1 },
-    { name: "Chi tiêu", value: expense || 0 },
-  ];
+  const chartData = useMemo(() => {
+    if (income === 0 && expense === 0) return [{ name: "Trống", value: 1 }];
+    return [
+      { name: "Thu nhập", value: income },
+      { name: "Chi tiêu", value: expense },
+    ];
+  }, [income, expense]);
 
-  const COLORS = ["#22c55e", "#ef4444"];
-
-  const onPieEnter = (_, index) => {
-    setActiveIndex(index);
-  };
+  const COLORS =
+    income === 0 && expense === 0 ? ["#334155"] : ["#22c55e", "#ef4444"];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.text || !formData.amount) return;
-    const amountNum = parseFloat(formData.amount);
+    const amountNum = Math.abs(parseFloat(formData.amount));
     await addTransaction({
       text: formData.text,
-      amount:
-        formData.type === "expense"
-          ? -Math.abs(amountNum)
-          : Math.abs(amountNum),
-      date: new Date().toISOString().split("T")[0],
+      amount: formData.type === "expense" ? -amountNum : amountNum,
+      category: "General",
     });
     setFormData({ text: "", amount: "", type: "income" });
   };
 
+  // --- MẸO GIGACHAD: TỰ GIẢM SIZE CHỮ KHI SỐ QUÁ DÀI ---
+  const getFontSize = (value) => {
+    const len = value.toLocaleString().length;
+    if (len > 15) return "text-xl";
+    if (len > 12) return "text-2xl";
+    if (len > 10) return "text-3xl";
+    return "text-4xl";
+  };
+
   return (
-    // bg-background ở Light Mode sẽ là xám nhạt, Dark Mode là đen sâu
-    <div className="flex-1 h-screen bg-slate-50 dark:bg-background p-8 flex flex-col overflow-hidden transition-colors duration-500">
+    <div className="flex flex-col flex-1 h-screen p-8 overflow-hidden transition-colors duration-500 bg-slate-50 dark:bg-background">
+      {/* HEADER */}
       <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="mb-6 flex-shrink-0"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex-shrink-0 mb-6"
       >
-        <h2 className="text-3xl font-bold text-slate-800 dark:text-textMain tracking-tight uppercase">
+        <h2 className="text-3xl font-bold tracking-tight uppercase text-slate-800 dark:text-textMain">
           Tổng Quan Tài Sản
         </h2>
         <p className="text-slate-500 dark:text-textSub text-[10px] font-bold tracking-widest uppercase">
-          AF Finance Management
+          AF Finance Management • System Stable
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0 overflow-hidden">
-        {/* CỘT 1: BALANCE & FORM */}
-        <div className="flex flex-col gap-6 h-full min-h-0">
-          {/* bg-panel ở Light Mode là trắng, có shadow nhẹ và border slate-200 */}
-          <div className="bg-white dark:bg-panel p-6 rounded-3xl shadow-sm dark:shadow-panel-depth border border-slate-200 dark:border-white/5 flex-shrink-0 group">
-            <h3 className="text-slate-400 dark:text-textSub text-[10px] font-bold uppercase tracking-widest mb-2 opacity-60 transition-opacity group-hover:opacity-100">
+      <div className="grid flex-1 min-h-0 grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* CỘT 1: VÍ & NHẬP LIỆU */}
+        <div className="flex flex-col gap-6">
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            className="p-6 bg-white border shadow-sm dark:bg-panel border-slate-200 dark:border-white/5 rounded-3xl dark:shadow-panel-depth"
+          >
+            <h3 className="text-slate-500 dark:text-textSub text-[10px] font-bold uppercase tracking-widest mb-1 opacity-60">
               Số dư hiện hữu
             </h3>
             <div
-              className={`text-4xl font-bold tracking-tighter truncate ${totalBalance >= 0 ? "text-income" : "text-expense"}`}
+              className={`font-bold tracking-tighter transition-all duration-300 ${getFontSize(totalBalance)} ${totalBalance >= 0 ? "text-income" : "text-expense"}`}
             >
               {totalBalance.toLocaleString()}{" "}
               <span className="text-lg font-normal opacity-40">đ</span>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-white dark:bg-panel p-6 rounded-3xl shadow-sm dark:shadow-panel-depth border border-slate-200 dark:border-white/5 flex-1 flex flex-col min-h-0">
-            <h3 className="text-lg font-bold text-slate-800 dark:text-textMain mb-4 flex items-center uppercase tracking-tighter flex-shrink-0">
-              <span className="w-1 h-5 bg-primary rounded-full mr-3"></span> Ghi
+          <div className="flex flex-col flex-1 p-6 overflow-hidden bg-white border shadow-sm dark:bg-panel border-slate-200 dark:border-white/5 rounded-3xl dark:shadow-panel-depth">
+            <h3 className="flex items-center mb-4 text-lg font-bold uppercase text-slate-800 dark:text-textMain">
+              <span className="w-1 h-5 mr-3 rounded-full bg-primary"></span> Ghi
               Chép
             </h3>
             <form
               onSubmit={handleSubmit}
-              className="space-y-4 flex-1 flex flex-col justify-center"
+              className="flex flex-col h-full gap-4"
             >
-              <div className="flex p-1 bg-slate-100 dark:bg-background rounded-xl border border-slate-200 dark:border-slate-800 flex-shrink-0">
+              <div className="flex p-1 border bg-slate-100 dark:bg-background border-slate-200 dark:border-slate-800 rounded-xl">
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, type: "income" })}
-                  className={`flex-1 py-2.5 rounded-lg text-[10px] font-bold transition-all ${formData.type === "income" ? "bg-income text-white shadow-md" : "text-slate-400 dark:text-textSub"}`}
+                  className={`flex-1 py-2.5 rounded-lg text-[10px] font-bold transition-all ${formData.type === "income" ? "bg-income text-white shadow-lg" : "text-slate-500 dark:text-textSub"}`}
                 >
                   THU NHẬP
                 </button>
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, type: "expense" })}
-                  className={`flex-1 py-2.5 rounded-lg text-[10px] font-bold transition-all ${formData.type === "expense" ? "bg-expense text-white shadow-md" : "text-slate-400 dark:text-textSub"}`}
+                  className={`flex-1 py-2.5 rounded-lg text-[10px] font-bold transition-all ${formData.type === "expense" ? "bg-expense text-white shadow-lg" : "text-slate-500 dark:text-textSub"}`}
                 >
                   CHI TIÊU
                 </button>
@@ -143,7 +149,7 @@ const FinanceDashboard = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, text: e.target.value })
                 }
-                className="w-full bg-slate-50 dark:bg-background border border-slate-200 dark:border-slate-800 p-3 rounded-xl text-sm outline-none focus:border-primary dark:focus:border-primary text-slate-800 dark:text-textMain transition-all font-bold"
+                className="w-full p-3 text-sm font-bold border outline-none bg-slate-50 dark:bg-background border-slate-200 dark:border-slate-800 rounded-xl focus:border-primary text-slate-800 dark:text-textMain"
               />
               <input
                 type="number"
@@ -152,123 +158,131 @@ const FinanceDashboard = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, amount: e.target.value })
                 }
-                className="w-full bg-slate-50 dark:bg-background border border-slate-200 dark:border-slate-800 p-3 rounded-xl text-sm outline-none focus:border-primary dark:focus:border-primary text-slate-800 dark:text-textMain transition-all font-bold"
+                className="w-full p-3 text-sm font-bold border outline-none bg-slate-50 dark:bg-background border-slate-200 dark:border-slate-800 rounded-xl focus:border-primary text-slate-800 dark:text-textMain"
               />
               <button
                 type="submit"
-                className="w-full bg-primary text-white font-bold py-3.5 rounded-xl shadow-lg hover:shadow-primary/30 active:scale-95 transition-all uppercase tracking-widest text-xs mt-auto"
+                className="flex items-center justify-center w-full gap-2 py-4 mt-auto text-xs font-bold tracking-widest text-white uppercase transition-all shadow-lg bg-primary hover:bg-primary/90 rounded-xl active:scale-95"
               >
-                Xác nhận
+                <FaPlus /> Xác nhận
               </button>
             </form>
           </div>
         </div>
 
-        {/* CỘT 2: BIỂU ĐỒ */}
-        <div className="bg-white dark:bg-panel p-6 rounded-3xl shadow-sm dark:shadow-panel-depth border border-slate-200 dark:border-white/5 flex flex-col h-full min-h-0 items-center justify-center">
-          <h3 className="text-lg font-bold text-slate-800 dark:text-textMain mb-4 uppercase tracking-tighter flex-shrink-0">
+        {/* CỘT 2: PHÂN TÍCH */}
+        <div className="flex flex-col p-6 bg-white border shadow-sm dark:bg-panel border-slate-200 dark:border-white/5 rounded-3xl dark:shadow-panel-depth">
+          <h3 className="mb-4 text-lg font-bold text-center uppercase text-slate-800 dark:text-textMain">
             Phân Tích
           </h3>
-          <div className="flex-1 w-full min-h-0 relative">
+          <div className="flex-1 w-full min-h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   activeIndex={activeIndex}
                   activeShape={renderActiveShape}
                   data={chartData}
-                  innerRadius="65%"
-                  outerRadius="80%"
-                  paddingAngle={8}
+                  innerRadius="68%"
+                  outerRadius="82%"
+                  paddingAngle={5}
                   dataKey="value"
                   stroke="none"
-                  onMouseEnter={onPieEnter}
+                  onMouseEnter={(_, index) => setActiveIndex(index)}
                   onMouseLeave={() => setActiveIndex(null)}
                 >
-                  {chartData.map((entry, index) => (
-                    <Cell
-                      key={index}
-                      fill={COLORS[index % COLORS.length]}
-                      className="focus:outline-none"
-                    />
+                  {chartData.map((_, index) => (
+                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip
-                  cursor={false}
-                  content={({ active, payload }) => {
-                    if (active && payload && payload.length) {
-                      return (
-                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl shadow-xl">
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-textSub mb-1">
-                            {payload[0].name}
-                          </p>
-                          <p
-                            className={`text-sm font-bold ${payload[0].name === "Thu nhập" ? "text-income" : "text-expense"}`}
-                          >
-                            {payload[0].value.toLocaleString()} đ
-                          </p>
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
+                  content={({ active, payload }) =>
+                    active &&
+                    payload?.length && (
+                      <div className="p-3 bg-white border shadow-2xl dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-xl">
+                        <p className="text-[10px] font-bold uppercase text-slate-400">
+                          {payload[0].name}
+                        </p>
+                        <p
+                          className={`text-sm font-bold ${payload[0].name === "Thu nhập" ? "text-income" : "text-expense"}`}
+                        >
+                          {payload[0].value.toLocaleString()} đ
+                        </p>
+                      </div>
+                    )
+                  }
                 />
               </PieChart>
             </ResponsiveContainer>
           </div>
-          {/* Legend Custom */}
-          <div className="flex gap-8 mt-4 flex-shrink-0">
-            <div
-              className={`flex items-center gap-2 transition-opacity ${activeIndex === 0 ? "opacity-100" : "opacity-40"}`}
-            >
-              <div className="w-3 h-3 rounded-full bg-income shadow-sm"></div>
-              <span className="text-[10px] font-bold text-slate-600 dark:text-textMain uppercase">
-                Thu nhập
-              </span>
-            </div>
-            <div
-              className={`flex items-center gap-2 transition-opacity ${activeIndex === 1 ? "opacity-100" : "opacity-40"}`}
-            >
-              <div className="w-3 h-3 rounded-full bg-expense shadow-sm"></div>
-              <span className="text-[10px] font-bold text-slate-600 dark:text-textMain uppercase">
-                Chi tiêu
-              </span>
-            </div>
+          <div className="flex justify-center gap-6 mt-4">
+            {["Thu nhập", "Chi tiêu"].map((label, i) => (
+              <div
+                key={label}
+                className={`flex items-center gap-2 transition-opacity ${activeIndex === i || activeIndex === null ? "opacity-100" : "opacity-30"}`}
+              >
+                <div
+                  className={`w-3 h-3 rounded-full ${i === 0 ? "bg-income" : "bg-expense"}`}
+                />
+                <span className="text-[10px] font-bold uppercase text-slate-600 dark:text-textMain">
+                  {label}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* CỘT 3: NHẬT KÝ */}
-        <div className="bg-white dark:bg-panel p-6 rounded-3xl shadow-sm dark:shadow-panel-depth border border-slate-200 dark:border-white/5 flex flex-col h-full min-h-0">
-          <h3 className="text-lg font-bold text-slate-800 dark:text-textMain mb-4 uppercase tracking-tighter flex-shrink-0">
+        {/* CỘT 3: NHẬT KÝ (FIXED COLORS) */}
+        <div className="flex flex-col p-6 overflow-hidden bg-white border shadow-sm dark:bg-panel border-slate-200 dark:border-white/5 rounded-3xl dark:shadow-panel-depth">
+          <h3 className="mb-4 text-lg font-bold text-center uppercase text-slate-800 dark:text-textMain">
             Nhật Ký
           </h3>
-          <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar min-h-0">
-            {transactions.map((t) => (
-              <div
-                key={t.id}
-                className="flex items-center justify-between p-4 bg-slate-50 dark:bg-background/40 rounded-2xl border border-transparent hover:border-slate-200 dark:hover:border-slate-800 transition-all group"
-              >
-                <div className="flex items-center space-x-3 min-w-0">
-                  <div
-                    className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs ${t.amount > 0 ? "bg-income/10 text-income" : "bg-expense/10 text-expense"}`}
+          <div className="flex-1 pr-2 space-y-3 overflow-y-auto custom-scrollbar">
+            <AnimatePresence mode="popLayout">
+              {transactions.length > 0 ? (
+                transactions.map((t) => (
+                  <motion.div
+                    key={t.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    className="flex items-center justify-between p-4 transition-all border border-transparent bg-slate-50 dark:bg-slate-800/40 rounded-2xl hover:border-primary/30 group"
                   >
-                    {t.amount > 0 ? <FaArrowTrendUp /> : <FaArrowTrendDown />}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="font-bold text-slate-700 dark:text-textMain text-xs truncate group-hover:text-primary transition-colors">
-                      {t.text}
-                    </p>
-                    <p className="text-[8px] text-slate-400 dark:text-textSub font-bold uppercase">
-                      {t.date}
-                    </p>
-                  </div>
+                    <div className="flex items-center min-w-0 gap-3">
+                      <div
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs ${t.amount > 0 ? "bg-income/20 text-income" : "bg-expense/20 text-expense"}`}
+                      >
+                        {t.amount > 0 ? (
+                          <FaArrowTrendUp size={14} />
+                        ) : (
+                          <FaArrowTrendDown size={14} />
+                        )}
+                      </div>
+                      <div className="truncate">
+                        {/* Fix màu chữ text-slate-700 -> dark:text-white */}
+                        <p className="text-xs font-bold uppercase truncate transition-colors text-slate-700 dark:text-slate-100 group-hover:text-primary">
+                          {t.text}
+                        </p>
+                        <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase">
+                          {t.date}
+                        </p>
+                      </div>
+                    </div>
+                    <div
+                      className={`font-bold text-sm tracking-tighter ${t.amount > 0 ? "text-income" : "text-expense"}`}
+                    >
+                      {t.amount.toLocaleString()} đ
+                    </div>
+                  </motion.div>
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full opacity-20">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-textSub">
+                    Không có giao dịch
+                  </p>
                 </div>
-                <div
-                  className={`font-bold text-sm tracking-tighter flex-shrink-0 ${t.amount > 0 ? "text-income" : "text-expense"}`}
-                >
-                  {t.amount.toLocaleString()} đ
-                </div>
-              </div>
-            ))}
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>

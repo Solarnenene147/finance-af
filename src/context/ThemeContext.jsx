@@ -1,33 +1,32 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useState, useEffect, useContext } from "react";
 
-// Tạo Context
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  // Lấy trạng thái lưu trong bộ nhớ, nếu chưa có thì mặc định là 'dark' cho ngầu
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
+  const getInitialTheme = () => {
+    if (typeof window === "undefined") return "dark";
+    return localStorage.getItem("theme") || "dark";
+  };
 
-  // Hàm này sẽ chạy mỗi khi bro gạt công tắc (biến 'theme' thay đổi)
+  const [theme, setTheme] = useState(getInitialTheme);
+
   useEffect(() => {
-    // Túm lấy thẻ <html> ngoài cùng
     const html = window.document.documentElement;
 
     if (theme === "dark") {
-      html.classList.add("dark"); // Gắn mác dark
-      html.classList.remove("light"); // Nhổ mác light đi
+      html.classList.add("dark");
+      html.classList.remove("light");
     } else {
-      html.classList.add("light"); // Gắn mác light
-      html.classList.remove("dark"); // Nhổ mác dark đi
+      html.classList.add("light");
+      html.classList.remove("dark");
     }
 
-    // Lưu vào LocalStorage để F5 không bị mất màu
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // Hàm lật công tắc
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
   };
 
   return (

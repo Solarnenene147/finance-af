@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom"; // Vũ khí điều hướng
+import { useNavigate } from "react-router-dom";
 import { FaWallet, FaShieldHalved, FaBoltLightning } from "react-icons/fa6";
 import { useAuth } from "../context/AuthContext";
 import logoImg from "../assets/logo.png";
@@ -30,9 +30,17 @@ const slides = [
 
 const LandingPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { bypass } = useAuth();
-  const navigate = useNavigate(); // Khởi tạo navigator
+  const { user, loading } = useAuth(); // Lấy thêm loading để tránh nháy giao diện
+  const navigate = useNavigate();
   const timerRef = useRef(null);
+
+  // --- LOGIC ĐIỀU HƯỚNG TỰ ĐỘNG ---
+  useEffect(() => {
+    // Nếu đã xác thực xong và có user, đá thẳng sang Dashboard
+    if (!loading && user) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [user, loading, navigate]);
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
@@ -54,23 +62,21 @@ const LandingPage = () => {
     startTimer();
   };
 
-  const handleDevMode = () => {
-    bypass(); // Kích hoạt quyền truy cập ưu tiên
-    navigate("/dashboard"); // Phi thẳng vào tổng hành dinh
-  };
-
   useEffect(() => {
     startTimer();
     return () => stopTimer();
   }, [startTimer, stopTimer]);
 
+  // Nếu đang loading thì trả về null hoặc một màn hình trống để tránh hiện Landing rồi mới nhảy Dashboard
+  if (loading) return null;
+
   return (
     <div className="relative flex flex-col items-center justify-center w-full h-screen p-6 overflow-hidden transition-colors duration-500 bg-background text-textMain">
-      {/* Hiệu ứng mờ nền cho tinh tế */}
+      {/* Background Decor */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]"></div>
 
       <div className="z-10 flex flex-col items-center w-full max-w-sm -mt-12">
-        {/* LOGO & BRANDING */}
+        {/* Logo Section */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -95,7 +101,7 @@ const LandingPage = () => {
           </h1>
         </motion.div>
 
-        {/* SLIDER SECTION */}
+        {/* Slideshow Content */}
         <div className="relative flex items-center justify-center w-full h-32 mb-6">
           <AnimatePresence mode="wait">
             <motion.div
@@ -109,11 +115,9 @@ const LandingPage = () => {
               <div className="mb-3 text-3xl text-primary/80 drop-shadow-sm">
                 {slides[currentSlide].icon}
               </div>
-
               <h2 className="text-lg font-bold mb-1.5 text-textMain">
                 {slides[currentSlide].title}
               </h2>
-
               <p className="text-textSub text-xs max-w-[240px] leading-relaxed font-medium">
                 {slides[currentSlide].description}
               </p>
@@ -121,7 +125,7 @@ const LandingPage = () => {
           </AnimatePresence>
         </div>
 
-        {/* INTERACTIVE DOTS */}
+        {/* Dots Pagination */}
         <div className="flex gap-2.5 mb-10">
           {slides.map((_, index) => (
             <button
@@ -137,23 +141,16 @@ const LandingPage = () => {
           ))}
         </div>
 
-        {/* ACTION BUTTONS */}
+        {/* Buttons Action */}
         <div className="flex flex-col items-center w-full gap-5">
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => navigate("/login")} // Điều hướng sang trang Login
+            onClick={() => navigate("/login")}
             className="w-full py-4 text-sm font-bold tracking-widest text-white uppercase transition-all shadow-lg bg-primary rounded-xl shadow-primary/20"
           >
             Tham Gia Ngay
           </motion.button>
-
-          <button
-            onClick={handleDevMode}
-            className="text-[10px] text-textSub hover:text-primary transition-colors uppercase tracking-[0.25em] font-bold"
-          >
-            Chế độ nhà phát triển
-          </button>
         </div>
       </div>
     </div>

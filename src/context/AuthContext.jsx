@@ -1,70 +1,109 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useState, useContext, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { supabase } from "../supabaseClient";
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return localStorage.getItem("af_finance_logged_in") === "true";
-  });
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const [isDevMode, setIsDevMode] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
-  const [isSigningUp, setIsSigningUp] = useState(false); // Trạng thái Đăng ký
+  const fetchProfile = async (userId) => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)
+      .single();
+
+    if (!error) setProfile(data);
+  };
 
   useEffect(() => {
-    localStorage.setItem("af_finance_logged_in", isLoggedIn);
-  }, [isLoggedIn]);
+    const getSession = async () => {
+      const { data } = await supabase.auth.getSession();
 
-  // Điều hướng
-  const checkLogin = () => {
-    setShowLogin(true);
-    setIsSigningUp(false);
-  };
-  const goToSignUp = () => {
-    setIsSigningUp(true);
-    setShowLogin(false);
-  };
-  const goToLogin = () => {
-    setIsSigningUp(false);
-    setShowLogin(true);
-  };
-  const backToHome = () => {
-    setIsSigningUp(false);
-    setShowLogin(false);
+      const session = data.session;
+
+      if (session?.user) {
+        setUser(session.user);
+        fetchProfile(session.user.id);
+      }
+
+      setLoading(false);
+    };
+
+    getSession();
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        const currentUser = session?.user ?? null;
+        setUser(currentUser);
+
+        if (currentUser) {
+          fetchProfile(currentUser.id);
+        } else {
+          setProfile(null);
+        }
+      },
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
+  const login = async (email, password) => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) throw error;
   };
 
-  const bypass = () => setIsDevMode(true);
-  const login = () => {
-    setIsLoggedIn(true);
-    setShowLogin(false);
-    setIsSigningUp(false);
+  const signup = async (email, password) => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (error) throw error;
   };
-  const logout = () => {
-    setIsLoggedIn(false);
-    setIsDevMode(false);
-    localStorage.removeItem("af_finance_logged_in");
+
+  const logout = async () => {
+    await supabase.auth.signOut();
+  };
+
+  const updateAvatar = async (userId, url) => {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ avatar_url: url })
+      .eq("id", userId);
+
+    if (error) throw error;
+
+    setProfile((prev) => ({
+      ...prev,
+      avatar_url: url,
+    }));
   };
 
   return (
     <AuthContext.Provider
       value={{
-        isLoggedIn,
-        isDevMode,
-        showLogin,
-        isSigningUp,
-        checkLogin,
-        goToSignUp,
-        goToLogin,
-        backToHome,
-        bypass,
+        user,
+        profile,
+        loading,
         login,
+        signup,
         logout,
+        updateAvatar,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
 export const useAuth = () => useContext(AuthContext);

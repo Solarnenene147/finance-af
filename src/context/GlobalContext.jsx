@@ -1,60 +1,59 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useReducer, useEffect, useContext } from "react";
-import axios from "axios";
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  useCallback,
+  useRef,
+} from "react";
+
+import { supabase } from "../supabaseClient";
+import { useAuth } from "./AuthContext";
+
+const GlobalContext = createContext();
 
 const initialState = {
   transactions: [],
   goals: [],
-  isLoading: true,
-  error: null,
+  lastUpdated: null,
 };
 
 const AppReducer = (state, action) => {
   switch (action.type) {
-    case "GET_TRANSACTIONS":
+    case "SET_DATA":
       return {
         ...state,
-        isLoading: false,
-        transactions: action.payload,
+        transactions: action.payload.transactions,
+        goals: action.payload.goals,
+        lastUpdated: Date.now(),
       };
 
-    case "ADD_TRANSACTION":
+    case "RESET":
+      return initialState;
+
+    case "ADD_T":
       return {
         ...state,
         transactions: [action.payload, ...state.transactions],
       };
 
-    case "DELETE_TRANSACTION":
+    case "DEL_T":
       return {
         ...state,
         transactions: state.transactions.filter((t) => t.id !== action.payload),
       };
 
-    case "GET_GOALS":
-      return {
-        ...state,
-        isLoading: false,
-        goals: action.payload,
-      };
-
-    case "ADD_GOAL":
+    case "ADD_G":
       return {
         ...state,
         goals: [action.payload, ...state.goals],
       };
 
-    case "DELETE_GOAL":
+    case "DEL_G":
       return {
         ...state,
         goals: state.goals.filter((g) => g.id !== action.payload),
-      };
-
-    case "TRANSACTION_ERROR":
-      return {
-        ...state,
-        error: action.payload,
-        isLoading: false,
       };
 
     default:
@@ -62,147 +61,196 @@ const AppReducer = (state, action) => {
   }
 };
 
-export const GlobalContext = createContext(initialState);
-
 export const GlobalProvider = ({ children }) => {
+  const { user } = useAuth();
+
   const [state, dispatch] = useReducer(AppReducer, initialState);
 
-  // API endpoints
-  const TRANSACTION_API = "http://localhost:5000/api/v1/transactions";
-  const GOALS_API = "http://localhost:5000/api/v1/goals";
+  const lastFetchedId = useRef(null);
 
-  // ===============================
-  // TRANSACTIONS
-  // ===============================
+  /*
+  ==========================
+  FETCH DATA
+  ==========================
+  */
 
-  const fetchTransactions = async () => {
+  const fetchData = useCallback(async (uid) => {
+    if (!uid || lastFetchedId.current === uid) return;
+
     try {
-      const res = await axios.get(TRANSACTION_API);
+      const tRes = await supabase
+        .from("transactions")
+        .select("*")
+        .eq("user_id", uid)
+        .order("created_at", { ascending: false });
+
+      const gRes = await supabase
+        .from("goals")
+        .select("*")
+        .eq("user_id", uid)
+        .order("created_at", { ascending: false });
+
+      if (tRes.error) throw tRes.error;
+      if (gRes.error) throw gRes.error;
 
       dispatch({
-        type: "GET_TRANSACTIONS",
-        payload: res.data.data,
+        type: "SET_DATA",
+        payload: {
+          transactions: (tRes.data || []).map((t) => ({
+            id: t.id,
+            text: t.description,
+            amount: t.amount,
+            date: new Date(t.created_at).toLocaleDateString("vi-VN"),
+            category: t.category,
+          })),
+          goals: gRes.data || [],
+        },
       });
+
+      lastFetchedId.current = uid;
     } catch (err) {
-      dispatch({
-        type: "TRANSACTION_ERROR",
-        payload: err.response?.data?.error || "Lỗi kết nối backend",
-      });
+      console.error("FETCH DATA ERROR:", err.message);
     }
-  };
+  }, []);
+
+  /*
+  ==========================
+  ADD TRANSACTION
+  ==========================
+  */
 
   const addTransaction = async (transaction) => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
+    if (!user?.id) return;
 
-    try {
-      const res = await axios.post(TRANSACTION_API, transaction, config);
+    const { data, error } = await supabase
+      .from("transactions")
+      .insert({
+        user_id: user.id,
+        description: transaction.text,
+        amount: transaction.amount,
+        category: transaction.category,
+      })
+      .select()
+      .single();
 
-      dispatch({
-        type: "ADD_TRANSACTION",
-        payload: res.data.data,
-      });
-    } catch (err) {
-      dispatch({
-        type: "TRANSACTION_ERROR",
-        payload: err.response?.data?.error || "Không thể lưu giao dịch",
-      });
+    if (error) {
+      console.error("Insert transaction lỗi:", error);
+      throw error;
     }
+
+    dispatch({
+      type: "ADD_T",
+      payload: {
+        id: data.id,
+        text: data.description,
+        amount: data.amount,
+        category: data.category,
+        date: new Date(data.created_at).toLocaleDateString("vi-VN"),
+      },
+    });
   };
+
+  /*
+  ==========================
+  DELETE TRANSACTION
+  ==========================
+  */
 
   const deleteTransaction = async (id) => {
-    try {
-      await axios.delete(`${TRANSACTION_API}/${id}`);
+    const { error } = await supabase.from("transactions").delete().eq("id", id);
 
-      dispatch({
-        type: "DELETE_TRANSACTION",
-        payload: id,
-      });
-    } catch (err) {
-      dispatch({
-        type: "TRANSACTION_ERROR",
-        payload: "Không thể xóa giao dịch",
-      });
+    if (error) {
+      console.error("Delete transaction lỗi:", error);
+      return;
     }
+
+    dispatch({
+      type: "DEL_T",
+      payload: id,
+    });
   };
 
-  // ===============================
-  // GOALS
-  // ===============================
-
-  const fetchGoals = async () => {
-    try {
-      const res = await axios.get(GOALS_API);
-
-      dispatch({
-        type: "GET_GOALS",
-        payload: res.data.data,
-      });
-    } catch (err) {
-      dispatch({
-        type: "GET_GOALS",
-        payload: [],
-      });
-    }
-  };
+  /*
+  ==========================
+  ADD GOAL
+  ==========================
+  */
 
   const addGoal = async (goal) => {
-    try {
-      const res = await axios.post(GOALS_API, goal);
+    if (!user?.id) return;
 
-      dispatch({
-        type: "ADD_GOAL",
-        payload: res.data.data,
-      });
-    } catch (err) {
-      dispatch({
-        type: "TRANSACTION_ERROR",
-        payload: "Không thể thêm mục tiêu",
-      });
+    const { data, error } = await supabase
+      .from("goals")
+      .insert({
+        user_id: user.id,
+        title: goal.title,
+        target_amount: goal.target_amount,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Insert goal lỗi:", error);
+      return;
     }
+
+    dispatch({
+      type: "ADD_G",
+      payload: data,
+    });
   };
+
+  /*
+  ==========================
+  DELETE GOAL
+  ==========================
+  */
 
   const deleteGoal = async (id) => {
-    try {
-      await axios.delete(`${GOALS_API}/${id}`);
+    const { error } = await supabase.from("goals").delete().eq("id", id);
 
-      dispatch({
-        type: "DELETE_GOAL",
-        payload: id,
-      });
-    } catch (err) {
-      dispatch({
-        type: "TRANSACTION_ERROR",
-        payload: "Không thể xóa mục tiêu",
-      });
+    if (error) {
+      console.error("Delete goal lỗi:", error);
+      return;
     }
+
+    dispatch({
+      type: "DEL_G",
+      payload: id,
+    });
   };
 
-  // ===============================
-  // LOAD DATA WHEN APP START
-  // ===============================
+  /*
+  ==========================
+  FETCH WHEN USER CHANGE
+  ==========================
+  */
 
   useEffect(() => {
-    fetchTransactions();
-    fetchGoals();
-  }, []);
+    if (user?.id) {
+      fetchData(user.id);
+    } else {
+      dispatch({ type: "RESET" });
+      lastFetchedId.current = null;
+    }
+  }, [user?.id, fetchData]);
+
+  /*
+  ==========================
+  PROVIDER
+  ==========================
+  */
 
   return (
     <GlobalContext.Provider
       value={{
         transactions: state.transactions,
         goals: state.goals,
-        isLoading: state.isLoading,
-        error: state.error,
+        lastUpdated: state.lastUpdated,
 
-        fetchTransactions,
         addTransaction,
         deleteTransaction,
 
-        fetchGoals,
         addGoal,
         deleteGoal,
       }}
@@ -212,4 +260,18 @@ export const GlobalProvider = ({ children }) => {
   );
 };
 
-export const useGlobalContext = () => useContext(GlobalContext);
+/*
+==========================
+HOOK
+==========================
+*/
+
+export const useGlobalContext = () => {
+  const context = useContext(GlobalContext);
+
+  if (!context) {
+    throw new Error("useGlobalContext phải nằm trong GlobalProvider");
+  }
+
+  return context;
+};
