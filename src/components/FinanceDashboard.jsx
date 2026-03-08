@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useGlobalContext } from "../context/GlobalContext";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
@@ -38,7 +38,9 @@ const FinanceDashboard = () => {
     amount: "",
     type: "income",
   });
-
+  useEffect(() => {
+    document.title = "Dashboard";
+  }, []);
   const { income, expense, totalBalance } = useMemo(() => {
     const inc = transactions
       .filter((t) => t.amount > 0)

@@ -33,8 +33,12 @@ const Sidebar = () => {
   const displayName = profile?.full_name || "Thành viên ẩn danh";
 
   // 2. Lấy Role (Admin/User) hoặc mặc định
-  const displayRole = profile?.role?.toUpperCase() || "Thành viên";
-
+  const displayRole =
+    profile?.role === "admin"
+      ? "Quản trị viên"
+      : profile?.role === "user"
+        ? "Thành viên"
+        : "Thành viên";
   // 3. Lấy Avatar URL
   const avatarUrl = profile?.avatar_url;
 
@@ -100,7 +104,7 @@ const Sidebar = () => {
                 Finance
               </span>
             </h1>
-            <p className="text-[10px] text-textSub mt-1 uppercase tracking-[0.3em] font-black opacity-60">
+            <p className="text-[10px] text-textSub mt-1 uppercase tracking-[0.3em] font-bold opacity-60">
               Wealth Management
             </p>
           </div>
@@ -144,7 +148,7 @@ const Sidebar = () => {
                   }}
                 />
               ) : (
-                <span className="text-lg font-black tracking-tighter text-white uppercase">
+                <span className="text-lg font-bold tracking-tighter text-white uppercase">
                   {displayInitials}
                 </span>
               )}
@@ -156,7 +160,7 @@ const Sidebar = () => {
                 <p className="text-sm font-bold truncate text-textMain dark:text-white">
                   {displayName}
                 </p>
-                <p className="text-[9px] text-asset font-black uppercase tracking-tighter opacity-80">
+                <p className="text-[9px] text-asset font-bold uppercase tracking-tighter opacity-80">
                   {displayRole}
                 </p>
               </div>

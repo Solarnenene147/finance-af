@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useGlobalContext } from "../context/GlobalContext";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
@@ -28,7 +28,9 @@ const Goals = () => {
     target: "",
     deadline: "",
   });
-
+  useEffect(() => {
+    document.title = "Mục tiêu";
+  }, []);
   // 1. TÍNH TOÁN NGÂN SÁCH THỰC TẾ ĐỂ SO SÁNH TIẾN ĐỘ
   const currentBudget = useMemo(() => {
     return transactions.reduce((acc, t) => acc + t.amount, 0);

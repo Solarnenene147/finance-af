@@ -9,6 +9,7 @@ export function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Lấy profile từ database
   const fetchProfile = async (userId) => {
     const { data, error } = await supabase
       .from("profiles")
@@ -16,13 +17,14 @@ export function AuthProvider({ children }) {
       .eq("id", userId)
       .single();
 
-    if (!error) setProfile(data);
+    if (!error) {
+      setProfile(data);
+    }
   };
 
   useEffect(() => {
     const getSession = async () => {
       const { data } = await supabase.auth.getSession();
-
       const session = data.session;
 
       if (session?.user) {
@@ -53,6 +55,7 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
+  // LOGIN
   const login = async (email, password) => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -62,19 +65,40 @@ export function AuthProvider({ children }) {
     if (error) throw error;
   };
 
-  const signup = async (email, password) => {
-    const { error } = await supabase.auth.signUp({
+  // REGISTER (đã sửa)
+  const register = async (email, password, metadata) => {
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
 
     if (error) throw error;
+
+    const user = data.user;
+
+    if (user) {
+      const { error: profileError } = await supabase.from("profiles").insert({
+        id: user.id,
+        email: email,
+        full_name: metadata.fullName,
+        phone: metadata.phone,
+        dob: metadata.dob,
+        gender: metadata.gender,
+        role: "user",
+      });
+
+      if (profileError) throw profileError;
+    }
+
+    return data;
   };
 
+  // LOGOUT
   const logout = async () => {
     await supabase.auth.signOut();
   };
 
+  // UPDATE AVATAR
   const updateAvatar = async (userId, url) => {
     const { error } = await supabase
       .from("profiles")
@@ -96,7 +120,7 @@ export function AuthProvider({ children }) {
         profile,
         loading,
         login,
-        signup,
+        register,
         logout,
         updateAvatar,
       }}

@@ -10,6 +10,11 @@ import {
   FaShieldHalved,
   FaRocket,
   FaSpinner,
+  FaMarsDouble,
+  FaEnvelope,
+  FaLock,
+  FaUser,
+  FaPhone,
 } from "react-icons/fa6";
 
 import { useAuth } from "../context/AuthContext";
@@ -20,6 +25,7 @@ const SignUpPage = () => {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
+  // 1. QUẢN LÝ DỮ LIỆU ĐĂNG KÝ
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
@@ -67,6 +73,7 @@ const SignUpPage = () => {
   };
 
   const validatePassword = (pass) => {
+    // Gigachad validation: 8-20 ký tự, hoa, thường, số, ký hiệu
     const regex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,20}$/;
     return regex.test(pass);
@@ -75,12 +82,12 @@ const SignUpPage = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
 
-    // 1. KIỂM TRA ĐIỀU KIỆN (VALIDATION)
+    // KIỂM TRA ĐIỀU KIỆN GIA NHẬP
     const birthDate = new Date(formData.dob);
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
     if (age < 18) {
-      setError("Đại ca cần đủ 18 tuổi để gia nhập pháo đài AF Finance!");
+      setError("Đại ca cần đủ 18 tuổi để chịu trách nhiệm tài chính cá nhân!");
       return;
     }
 
@@ -92,19 +99,20 @@ const SignUpPage = () => {
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Mật mã xác nhận không khớp!");
+      setError("Xác nhận mật mã không trùng khớp với dữ liệu đã nhập!");
       return;
     }
 
     if (!formData.agree) {
-      setError("Đại ca vui lòng chấp nhận chính sách bảo mật!");
+      setError("Yêu cầu phê duyệt Chính sách bảo mật để tiếp tục.");
       return;
     }
 
-    // 2. GIAO TIẾP VỚI SUPABASE
     setIsLoading(true);
     try {
-      // Gọi register từ Context, truyền email, password và object chứa metadata
+      if (typeof register !== "function")
+        throw new Error("Hệ thống đăng ký đang bảo trì. Vui lòng thử lại sau.");
+
       await register(formData.email, formData.password, {
         fullName: formData.fullName,
         phone: formData.phone,
@@ -112,8 +120,6 @@ const SignUpPage = () => {
         gender: formData.gender,
       });
 
-      // Nếu Supabase chưa tắt xác thực email, báo người dùng kiểm tra mail
-      // Nếu đã tắt, Supabase sẽ tự động đăng nhập (nhưng ta nên hướng về login cho chắc)
       navigate("/login", {
         state: {
           message:
@@ -121,10 +127,7 @@ const SignUpPage = () => {
         },
       });
     } catch (err) {
-      // Xử lý lỗi từ Supabase (Email đã tồn tại, lỗi mạng, v.v.)
-      setError(
-        err.message || "Không thể khởi tạo tài khoản. Vui lòng kiểm tra lại!",
-      );
+      setError(err.message || "Giao thức khởi tạo tài khoản thất bại.");
     } finally {
       setIsLoading(false);
     }
@@ -133,25 +136,26 @@ const SignUpPage = () => {
   return (
     <div
       style={{ fontFamily: "sans-serif" }}
-      className="flex items-center justify-center w-full h-screen p-4 transition-colors duration-500 bg-slate-100 dark:bg-slate-950"
+      className="flex items-center justify-center w-full h-screen p-4 font-bold transition-colors duration-500 bg-slate-100 dark:bg-slate-950"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-6xl h-[88vh] bg-white dark:bg-slate-900 rounded-[3rem] shadow-2xl overflow-hidden flex flex-col md:flex-row border border-slate-200 dark:border-white/5"
+        className="w-full max-w-6xl h-[88vh] bg-white dark:bg-slate-900 rounded-[3rem] shadow-2xl overflow-hidden flex flex-col md:flex-row border border-slate-200 dark:border-white/5 font-bold"
       >
-        {/* LEFT PANEL: SLIDER THÔNG TIN */}
-        <div className="relative flex-col items-center justify-center hidden p-12 transition-colors border-r lg:flex lg:w-5/12 bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800">
+        {/* LEFT PANEL: SLIDER CHUYÊN NGHIỆP */}
+        <div className="relative flex-col items-center justify-center hidden p-12 font-bold transition-colors border-r lg:flex lg:w-5/12 bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800">
           <button
             onClick={() => navigate("/")}
-            className="absolute top-8 left-8 flex items-center text-slate-400 hover:text-primary transition-colors font-bold text-[12px] uppercase tracking-widest gap-2"
+            className="absolute top-8 left-8 flex items-center text-slate-400 hover:text-primary transition-colors font-bold text-[10px] uppercase tracking-widest gap-2"
           >
-            <FaArrowLeft /> QUAY LẠI
+            <FaArrowLeft /> TRANG CHỦ
           </button>
-          <div className="absolute top-8 right-6">
+
+          <div className="absolute top-8 right-8">
             <button
               onClick={toggleTheme}
-              className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${theme === "dark" ? "bg-primary" : "bg-slate-300"}`}
+              className="inline-flex items-center w-12 transition-all rounded-full h-7 bg-slate-300 dark:bg-primary"
             >
               <span
                 className={`inline-flex h-5 w-5 transform items-center justify-center rounded-full bg-white shadow-md transition-transform duration-300 ${theme === "dark" ? "translate-x-6" : "translate-x-1"}`}
@@ -164,22 +168,23 @@ const SignUpPage = () => {
               </span>
             </button>
           </div>
+
           <AnimatePresence mode="wait">
             <motion.div
               key={currentSlide}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="space-y-6 text-center"
+              className="space-y-6 font-bold text-center"
             >
               <div className="flex justify-center drop-shadow-xl">
                 {slides[currentSlide].icon}
               </div>
               <div className="px-8 space-y-3">
-                <h2 className="text-3xl font-bold tracking-tighter uppercase text-slate-800 dark:text-white">
+                <h2 className="text-[20px] font-bold tracking-tighter uppercase text-slate-800 dark:text-white leading-tight">
                   {slides[currentSlide].title}
                 </h2>
-                <p className="text-sm font-medium leading-relaxed text-slate-500 dark:text-slate-400">
+                <p className="text-[12px] font-bold leading-relaxed text-slate-500 dark:text-slate-400">
                   {slides[currentSlide].desc}
                 </p>
               </div>
@@ -195,12 +200,12 @@ const SignUpPage = () => {
           </div>
         </div>
 
-        {/* RIGHT PANEL: FORM ĐĂNG KÝ */}
-        <div className="relative flex flex-col w-full p-10 overflow-y-auto transition-colors bg-white lg:w-7/12 custom-scrollbar dark:bg-slate-900">
+        {/* RIGHT PANEL: FORM ĐĂNG KÝ DOANH NGHIỆP */}
+        <div className="relative flex flex-col w-full p-10 overflow-y-auto font-bold transition-colors bg-white lg:w-7/12 custom-scrollbar dark:bg-slate-900">
           <div className="w-full max-w-md mx-auto">
-            <div className="mb-6">
+            <div className="mb-8">
               <h2 className="text-3xl font-bold leading-none tracking-tighter uppercase text-slate-800 dark:text-white">
-                TẠO <span className="text-primary">TÀI KHOẢN</span>
+                TẠO <span className="text-primary">DANH TÍNH</span>
               </h2>
               <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mt-2">
                 HỆ ĐIỀU HÀNH TÀI CHÍNH AF FINANCE
@@ -211,47 +216,47 @@ const SignUpPage = () => {
               <motion.div
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="mb-5 p-3 bg-expense/10 border border-expense/20 text-expense text-[9px] font-bold rounded-xl text-center uppercase tracking-widest leading-relaxed"
+                className="mb-6 p-4 bg-expense/10 border border-expense/20 text-expense text-[10px] font-bold rounded-xl text-center uppercase tracking-widest leading-relaxed"
               >
-                {error}
+                <FaTriangleExclamation className="inline mr-2" /> {error}
               </motion.div>
             )}
 
-            <form onSubmit={handleSignUp} className="space-y-4">
+            <form onSubmit={handleSignUp} className="space-y-4 font-bold">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase ml-1">
+                  <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase ml-1 tracking-widest">
                     HỌ VÀ TÊN
                   </label>
                   <input
                     type="text"
                     name="fullName"
                     required
-                    placeholder="Nguyễn Văn A"
+                    placeholder="Họ và tên..."
                     value={formData.fullName}
                     onChange={handleChange}
-                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-xs font-bold outline-none focus:border-primary dark:text-white transition-all"
+                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-[12px] font-bold outline-none focus:border-primary dark:text-white transition-all"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase ml-1">
+                  <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase ml-1 tracking-widest">
                     SỐ ĐIỆN THOẠI
                   </label>
                   <input
                     type="tel"
                     name="phone"
                     required
-                    placeholder="090-XXX-XXXX"
+                    placeholder="0901 xxx xxx"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-xs font-bold outline-none focus:border-primary dark:text-white transition-all"
+                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-[12px] font-bold outline-none focus:border-primary dark:text-white transition-all"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase ml-1">
+                  <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase ml-1 tracking-widest">
                     NGÀY SINH
                   </label>
                   <input
@@ -260,11 +265,11 @@ const SignUpPage = () => {
                     required
                     value={formData.dob}
                     onChange={handleChange}
-                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-xs font-bold outline-none focus:border-primary dark:text-white transition-all [&::-webkit-calendar-picker-indicator]:dark:invert"
+                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-[12px] font-bold outline-none focus:border-primary dark:text-white transition-all [&::-webkit-calendar-picker-indicator]:dark:invert"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase ml-1">
+                  <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase ml-1 tracking-widest">
                     GIỚI TÍNH
                   </label>
                   <div className="flex gap-2 p-1 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-xl h-[46px]">
@@ -273,7 +278,7 @@ const SignUpPage = () => {
                         key={g}
                         type="button"
                         onClick={() => setFormData({ ...formData, gender: g })}
-                        className={`flex-1 rounded-lg text-[9px] font-bold uppercase transition-all ${formData.gender === g ? "bg-primary text-white shadow-lg" : "text-slate-400 hover:text-slate-600"}`}
+                        className={`flex-1 rounded-lg text-[10px] font-bold uppercase transition-all ${formData.gender === g ? "bg-primary text-white shadow-lg" : "text-slate-400 hover:text-slate-600"}`}
                       >
                         {g === "male" ? "NAM" : "NỮ"}
                       </button>
@@ -283,24 +288,24 @@ const SignUpPage = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase ml-1">
+                <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase ml-1 tracking-widest">
                   EMAIL ĐỊNH DANH
                 </label>
                 <input
                   type="email"
                   name="email"
                   required
-                  placeholder="youremail@gmail.com"
+                  placeholder="youremail@af.com"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-xs font-bold outline-none focus:border-primary dark:text-white transition-all"
+                  className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-[12px] font-bold outline-none focus:border-primary dark:text-white transition-all"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase ml-1">
-                    MẬT KHẨU
+                  <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase ml-1 tracking-widest">
+                    MẬT MÃ
                   </label>
                   <input
                     type="password"
@@ -309,11 +314,11 @@ const SignUpPage = () => {
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-xs font-bold outline-none focus:border-primary dark:text-white transition-all"
+                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-[12px] font-bold outline-none focus:border-primary dark:text-white transition-all"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase ml-1">
+                  <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase ml-1 tracking-widest">
                     XÁC NHẬN
                   </label>
                   <input
@@ -323,7 +328,7 @@ const SignUpPage = () => {
                     required
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-xs font-bold outline-none focus:border-primary dark:text-white transition-all"
+                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-[12px] font-bold outline-none focus:border-primary dark:text-white transition-all"
                   />
                 </div>
               </div>
@@ -339,7 +344,7 @@ const SignUpPage = () => {
                 />
                 <label
                   htmlFor="agree"
-                  className="text-[9px] text-slate-500 font-bold uppercase cursor-pointer dark:text-slate-400"
+                  className="text-[10px] text-slate-500 font-bold uppercase cursor-pointer dark:text-slate-400 tracking-widest"
                 >
                   TÔI ĐỒNG Ý VỚI{" "}
                   <a href="/privacy" className="underline text-primary">
@@ -354,21 +359,21 @@ const SignUpPage = () => {
                 whileTap={{ scale: 0.98 }}
                 disabled={isLoading}
                 type="submit"
-                className="w-full bg-primary text-white font-bold py-4 rounded-xl shadow-lg hover:bg-primary/90 transition-all uppercase tracking-[0.2em] text-[10px] mt-4 flex items-center justify-center gap-3"
+                className="w-full bg-primary text-white font-bold py-4 rounded-xl shadow-lg hover:bg-primary/90 transition-all uppercase tracking-[0.2em] text-[12px] mt-4 flex items-center justify-center gap-3 shadow-primary/20"
               >
                 {isLoading ? (
                   <FaSpinner className="text-lg animate-spin" />
                 ) : (
-                  "TẠO TÀI KHOẢN"
+                  "PHÊ DUYỆT GIA NHẬP"
                 )}
               </motion.button>
             </form>
 
-            <p className="text-center text-[12px] font-bold text-slate-400 uppercase tracking-tighter mt-8">
-              ĐÃ CÓ TÀI KHOẢN?{" "}
+            <p className="text-center text-[12px] font-bold text-slate-400 uppercase mt-8 tracking-tighter">
+              ĐÃ CÓ QUYỀN TRUY CẬP?
               <button
                 onClick={() => navigate("/login")}
-                className="ml-1 transition-all text-primary hover:underline"
+                className="ml-2 transition-all text-primary hover:underline"
               >
                 ĐĂNG NHẬP NGAY
               </button>

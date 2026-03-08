@@ -49,6 +49,10 @@ const LandingPage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    document.title = "AF Finance";
+  }, []);
+
   const startTimer = useCallback(() => {
     stopTimer();
     timerRef.current = setInterval(() => {

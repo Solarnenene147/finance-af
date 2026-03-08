@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 // eslint-disable-next-line no-unused-vars
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -42,13 +42,19 @@ const LoginPage = () => {
     try {
       await login(email, password);
 
-      toast.success("Đăng nhập thành công. Đang chuyển hướng...", {
+      toast.success("HỆ THỐNG PHÊ DUYỆT ĐĂNG NHẬP!", {
         icon: "✅",
         duration: 2500,
         style: {
           borderRadius: "12px",
           fontSize: "12px",
           fontWeight: "bold",
+          background: theme === "dark" ? "#1e293b" : "#ffffff",
+          color: theme === "dark" ? "#f8fafc" : "#0f172a",
+          border:
+            theme === "dark"
+              ? "1px solid rgba(255,255,255,0.1)"
+              : "2px solid #0f172a",
         },
       });
 
@@ -56,22 +62,39 @@ const LoginPage = () => {
         navigate("/dashboard");
       }, 800);
     } catch (err) {
-      setError(
-        err.message ||
-          "Xác thực không thành công. Vui lòng kiểm tra lại thông tin đăng nhập.",
-      );
+      // LOG LỖI THẬT TRONG CONSOLE
+      console.error("LOGIN ERROR:", err);
+
+      // TOAST CHỈ HIỆN THÔNG BÁO CHUNG
+      toast.error("SAI TÊN ĐĂNG NHẬP HOẶC MẬT KHẨU!", {
+        icon: "⚠️",
+        duration: 3000,
+        style: {
+          borderRadius: "12px",
+          fontSize: "12px",
+          fontWeight: "bold",
+          background: theme === "dark" ? "#1e293b" : "#ffffff",
+          color: theme === "dark" ? "#f8fafc" : "#0f172a",
+          border:
+            theme === "dark"
+              ? "1px solid rgba(255,255,255,0.1)"
+              : "2px solid #0f172a",
+        },
+      });
+
+      setError("SAI TÊN ĐĂNG NHẬP HOẶC MẬT KHẨU!");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleForgotPassword = () => {
-    toast("Tính năng khôi phục mật khẩu đang được phát triển.", {
+    toast("TÍNH NĂNG ĐANG ĐƯỢC XÂY DỰNG.", {
       icon: "ℹ️",
       style: {
         borderRadius: "12px",
-        background: theme === "dark" ? "#1e293b" : "#ffffff",
-        color: theme === "dark" ? "#f8fafc" : "#0f172a",
+        background: theme === "dark" ? "#1e293b" : "#0f172a", // Light mode dùng nền tối cho toast cực gắt
+        color: "#ffffff",
         fontSize: "12px",
         fontWeight: "bold",
         padding: "12px 20px",
@@ -83,28 +106,29 @@ const LoginPage = () => {
   return (
     <div
       style={{ fontFamily: "sans-serif" }}
-      className="flex items-center justify-center w-full h-screen p-4 transition-colors duration-500 bg-slate-100 dark:bg-slate-950"
+      // Nền Light mode từ xám nhạt chuyển sang xám có độ sâu hơn
+      className="flex items-center justify-center w-full h-screen p-4 font-bold transition-colors duration-500 bg-slate-200 dark:bg-slate-950"
     >
-      {/* TOASTER */}
-      <Toaster position="top-right" />
+      <Toaster position="top-center" />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md p-10 bg-white dark:bg-slate-900 rounded-[3rem] shadow-2xl border border-slate-200 dark:border-white/5 relative overflow-hidden"
+        // Card được làm border đậm hơn (border-2) và shadow-2xl cực mạnh ở Light mode
+        className="w-full max-w-md p-10 bg-white dark:bg-slate-900 rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.2)] dark:shadow-2xl border-2 border-slate-300 dark:border-white/5 relative overflow-hidden transition-all"
       >
-        {/* BACK BUTTON */}
+        {/* BACK BUTTON - Text đậm hơn */}
         <button
           onClick={() => navigate("/")}
-          className="absolute top-8 left-8 text-slate-400 hover:text-primary transition-colors text-[10px] uppercase tracking-widest flex items-center gap-2"
+          className="absolute top-8 left-8 text-slate-600 dark:text-slate-400 hover:text-primary transition-colors text-[10px] font-bold uppercase tracking-widest flex items-center gap-2"
         >
           <FaArrowLeft /> TRANG CHỦ
         </button>
 
-        {/* THEME SWITCH */}
+        {/* THEME SWITCH - Border đậm hơn */}
         <button
           onClick={toggleTheme}
-          className="absolute inline-flex items-center w-12 transition-all rounded-full top-8 right-8 h-7 bg-slate-300 dark:bg-primary"
+          className="absolute inline-flex items-center w-12 transition-all border rounded-full top-8 right-8 h-7 bg-slate-400 dark:bg-primary border-slate-500 dark:border-transparent"
         >
           <span
             className={`inline-flex h-5 w-5 transform items-center justify-center rounded-full bg-white shadow-md transition-transform duration-300 ${theme === "dark" ? "translate-x-6" : "translate-x-1"}`}
@@ -112,106 +136,108 @@ const LoginPage = () => {
             {theme === "dark" ? (
               <FaMoon className="text-primary text-[8px]" />
             ) : (
-              <FaSun className="text-amber-500 text-[10px]" />
+              <FaSun className="text-amber-600 text-[10px]" />
             )}
           </span>
         </button>
 
         {/* HEADER */}
         <div className="mt-12 mb-8 text-center">
-          <h2 className="text-3xl font-bold leading-none tracking-tighter uppercase text-slate-800 dark:text-white">
+          <h2 className="text-4xl font-bold leading-none tracking-tighter uppercase text-slate-900 dark:text-white">
             ĐĂNG <span className="text-primary">NHẬP</span>
           </h2>
 
-          <p className="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-2 leading-relaxed">
-            Hệ thống quản trị tài chính AF Finance
+          <p className="text-[12px] text-slate-700 dark:text-slate-500 uppercase tracking-widest mt-3 leading-relaxed font-bold">
+            HỆ THỀU HÀNH TÀI CHÍNH AF FINANCE
           </p>
         </div>
 
-        {successMsg && !error && (
-          <div className="mb-6 p-3 bg-income/10 border border-income/20 text-income text-[10px] rounded-xl text-center uppercase tracking-widest flex items-center justify-center gap-2">
-            <FaCircleCheck /> {successMsg}
-          </div>
-        )}
-
-        {error && (
-          <div className="mb-6 p-3 bg-expense/10 border border-expense/20 text-expense text-[10px] rounded-xl text-center uppercase tracking-widest flex items-center justify-center gap-2 leading-relaxed">
-            <FaTriangleExclamation className="text-xs" /> {error}
-          </div>
-        )}
+        {/* MESSAGES - Banner đậm màu hơn */}
+        <AnimatePresence>
+          {successMsg && !error && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="mb-6 p-4 bg-income text-white text-[12px] font-bold rounded-2xl text-center uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg"
+            >
+              <FaCircleCheck /> {successMsg}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <form onSubmit={handleLogin} className="space-y-6">
           {/* EMAIL */}
           <div className="space-y-2">
-            <label className="text-[10px] text-slate-500 dark:text-slate-400 uppercase ml-1 tracking-widest">
+            <label className="text-[10px] text-slate-800 dark:text-slate-400 uppercase ml-1 tracking-widest font-bold">
               ĐỊA CHỈ EMAIL
             </label>
 
             <div className="relative">
-              <FaEnvelope className="absolute text-sm -translate-y-1/2 left-4 top-1/2 text-slate-400" />
+              <FaEnvelope className="absolute text-base -translate-y-1/2 left-4 top-1/2 text-slate-600 dark:text-slate-400" />
 
               <input
                 type="email"
                 autoComplete="username"
                 required
-                placeholder="Nhập địa chỉ email..."
+                placeholder="youremail@af-finance.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-4 pl-12 text-[12px] border-2 outline-none bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800 rounded-2xl focus:border-primary dark:text-white transition-all"
+                // Border-2 và text-slate-950 để cực đậm ở Light mode
+                className="w-full p-4 pl-12 text-[13px] font-bold border-2 outline-none bg-slate-50 dark:bg-slate-800/50 border-slate-400 dark:border-slate-800 rounded-2xl focus:border-primary text-slate-950 dark:text-white transition-all placeholder:text-slate-500"
               />
             </div>
           </div>
 
           {/* PASSWORD */}
           <div className="space-y-2">
-            <label className="text-[10px] text-slate-500 dark:text-slate-400 uppercase ml-1 tracking-widest">
+            <label className="text-[10px] text-slate-800 dark:text-slate-400 uppercase ml-1 tracking-widest font-bold">
               MẬT KHẨU
             </label>
 
             <div className="relative">
-              <FaLock className="absolute text-sm -translate-y-1/2 left-4 top-1/2 text-slate-400" />
+              <FaLock className="absolute text-base -translate-y-1/2 left-4 top-1/2 text-slate-600 dark:text-slate-400" />
 
               <input
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 required
-                placeholder="Nhập mật khẩu"
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-4 pl-12 pr-12 text-[12px] border-2 outline-none bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800 rounded-2xl focus:border-primary dark:text-white transition-all"
+                className="w-full p-4 pl-12 pr-12 text-[13px] font-bold border-2 outline-none bg-slate-50 dark:bg-slate-800/50 border-slate-400 dark:border-slate-800 rounded-2xl focus:border-primary text-slate-950 dark:text-white transition-all placeholder:text-slate-500"
               />
 
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute transition-colors -translate-y-1/2 right-4 top-1/2 text-slate-400 hover:text-primary"
+                className="absolute transition-colors -translate-y-1/2 right-4 top-1/2 text-slate-600 dark:text-slate-400 hover:text-primary"
               >
-                {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
               </button>
             </div>
           </div>
 
-          {/* FORGOT PASSWORD */}
+          {/* FORGOT PASSWORD - Màu đậm hơn */}
           <div className="flex justify-end">
             <button
               type="button"
               onClick={handleForgotPassword}
-              className="text-[10px] text-slate-400 hover:text-primary uppercase tracking-widest transition-colors italic underline underline-offset-4"
+              className="text-[11px] text-slate-600 dark:text-slate-400 hover:text-primary uppercase tracking-widest transition-colors underline underline-offset-4 font-bold"
             >
               Quên mật khẩu?
             </button>
           </div>
 
-          {/* LOGIN BUTTON */}
+          {/* LOGIN BUTTON - Shadow mạnh hơn */}
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             disabled={isLoading}
             type="submit"
-            className="w-full bg-primary text-white py-4 rounded-2xl shadow-xl hover:bg-primary/90 transition-all uppercase tracking-[0.2em] text-[12px] mt-4 flex items-center justify-center gap-3 shadow-primary/20"
+            className="w-full bg-primary text-white py-4 rounded-2xl shadow-[0_10px_20px_rgba(var(--color-primary-rgb),0.4)] hover:bg-primary/90 transition-all uppercase tracking-[0.2em] text-[13px] mt-4 flex items-center justify-center gap-3 font-bold"
           >
             {isLoading ? (
-              <FaSpinner className="text-lg animate-spin" />
+              <FaSpinner className="text-xl animate-spin" />
             ) : (
               "ĐĂNG NHẬP"
             )}
@@ -219,13 +245,13 @@ const LoginPage = () => {
         </form>
 
         {/* SIGNUP */}
-        <p className="text-center text-[12px] text-slate-400 uppercase mt-10 tracking-tighter">
-          CHƯA CÓ TÀI KHOẢN?
+        <p className="text-center text-[12px] text-slate-600 dark:text-slate-400 uppercase mt-12 tracking-tighter font-bold">
+          CHƯA CÓ QUYỀN TRUY CẬP?
           <button
             onClick={() => navigate("/signup")}
-            className="ml-2 italic transition-all text-primary hover:underline"
+            className="ml-2 font-bold transition-all text-primary hover:underline"
           >
-            Đăng ký
+            ĐĂNG KÝ NGAY
           </button>
         </p>
       </motion.div>
