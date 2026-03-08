@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useGlobalContext } from "../context/GlobalContext";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
@@ -26,7 +26,9 @@ const Transactions = () => {
     type: "all",
     sortBy: "date-desc",
   });
-
+  useEffect(() => {
+    document.title = "Giao dịch";
+  }, []);
   // Logic xử lý dữ liệu
   const processedTransactions = useMemo(() => {
     return transactions

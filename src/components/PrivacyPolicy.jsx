@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaChevronLeft, FaShieldHalved, FaMoon, FaSun } from "react-icons/fa6";
 import { useTheme } from "../context/ThemeContext";
@@ -6,7 +6,9 @@ import { useTheme } from "../context/ThemeContext";
 const PrivacyPolicy = () => {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
-
+  useEffect(() => {
+    document.title = "Chính sách bảo mật";
+  }, []);
   return (
     <div className="min-h-screen px-4 py-12 font-bold transition-colors duration-500 bg-slate-50 dark:bg-slate-900 sm:px-6 lg:px-8 text-slate-800 dark:text-slate-200">
       <div className="max-w-3xl mx-auto">

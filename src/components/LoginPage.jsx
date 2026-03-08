@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -33,6 +33,10 @@ const LoginPage = () => {
   const [error, setError] = useState("");
 
   const successMsg = location.state?.message;
+
+  useEffect(() => {
+    document.title = "Đăng nhập";
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();

@@ -217,10 +217,7 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
       if (rpcError) throw rpcError;
 
       // 3. Thông báo thành công và dọn dẹp Client
-      showStatus(
-        "success",
-        "Đế chế đã bị hủy diệt hoàn toàn. Đang đăng xuất...",
-      );
+      showStatus("success", "Tài khoản đã xóa. Đang đăng xuất...");
 
       setTimeout(async () => {
         await logout();
@@ -264,7 +261,7 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
 
         <motion.div
           initial={{ scale: 0.95, opacity: 0, y: 20 }}
-          animate={{ scale: 0.9, opacity: 1, y: 0 }}
+          animate={{ scale: 0.85, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 20 }}
           className="relative w-full max-w-4xl h-[680px] bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl overflow-hidden flex border border-slate-200 dark:border-white/10 font-bold"
         >
@@ -330,7 +327,7 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
               onClick={() => setShowLogoutConfirm(true)}
               className="flex items-center justify-center gap-4 px-5 py-4 mt-auto text-[12px] font-bold uppercase border-2 border-red-500/30 text-expense hover:bg-expense hover:text-white rounded-2xl transition-all"
             >
-              <FaRightFromBracket /> Đăng xuất hệ thống
+              <FaRightFromBracket /> Đăng xuất
             </button>
           </div>
 
@@ -371,7 +368,7 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
                   <div className="grid gap-6 font-bold">
                     <div className="space-y-2">
                       <label className="text-[10px] font-bold uppercase text-slate-400 ml-1 tracking-widest">
-                        Họ và tên định danh
+                        Họ và tên
                       </label>
                       <input
                         placeholder="Họ và tên đầy đủ..."
@@ -384,7 +381,7 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-bold uppercase text-slate-400 ml-1 tracking-widest">
-                        Địa chỉ thư điện tử
+                        Email
                       </label>
                       <input
                         value={userData.email}
@@ -395,7 +392,7 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
                     <div className="grid grid-cols-2 gap-6 font-bold">
                       <div className="space-y-2">
                         <label className="text-[10px] font-bold uppercase text-slate-400 ml-1 tracking-widest">
-                          Số điện thoại liên lạc
+                          Số điện thoại
                         </label>
                         <input
                           placeholder="0901 xxx xxx"
@@ -422,7 +419,7 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-bold uppercase text-slate-400 ml-1 tracking-widest">
-                        Phân loại giới tính
+                        Giới tính
                       </label>
                       <div className="flex gap-2 p-1 border-2 rounded-2xl border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 h-[58px]">
                         {["male", "female"].map((g) => (
@@ -598,7 +595,7 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full p-4 mb-6 text-[12px] font-black tracking-widest text-center border-2 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-2xl focus:border-primary dark:text-white outline-none"
+                  className="w-full p-4 mb-6 text-[12px] font-bold tracking-widest text-center border-2 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-2xl focus:border-primary dark:text-white outline-none"
                 />
                 <div className="flex flex-col gap-2 font-bold">
                   <button
@@ -653,7 +650,7 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
                   value={deletePassword}
                   onChange={(e) => setDeletePassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full p-4 mb-6 text-[12px] font-black tracking-widest text-center border-2 bg-slate-50 dark:bg-slate-800 border-expense/20 rounded-2xl focus:border-expense dark:text-white outline-none"
+                  className="w-full p-4 mb-6 text-[12px] font-bold tracking-widest text-center border-2 bg-slate-50 dark:bg-slate-800 border-expense/20 rounded-2xl focus:border-expense dark:text-white outline-none"
                 />
                 <div className="flex flex-col gap-3 font-bold">
                   <button

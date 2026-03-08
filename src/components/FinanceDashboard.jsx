@@ -39,7 +39,7 @@ const FinanceDashboard = () => {
     type: "income",
   });
   useEffect(() => {
-    document.title = "Dashboard";
+    document.title = "Tổng quan";
   }, []);
   const { income, expense, totalBalance } = useMemo(() => {
     const inc = transactions

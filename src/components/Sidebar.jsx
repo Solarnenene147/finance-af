@@ -26,7 +26,6 @@ const Sidebar = () => {
     { name: "Giao dịch", icon: <FaMoneyBillWave />, path: "/transactions" },
     { name: "Mục tiêu", icon: <FaBullseye />, path: "/goals" },
   ];
-
   // --- LOGIC HIỂN THỊ DANH TÍNH GIGACHAD ---
 
   // 1. Ưu tiên lấy full_name từ database, nếu đang fetch thì hiện "Đang tải..."

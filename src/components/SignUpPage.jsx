@@ -60,6 +60,10 @@ const SignUpPage = () => {
   ];
 
   useEffect(() => {
+    document.title = "Đăng ký";
+  }, []);
+
+  useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
