@@ -185,6 +185,7 @@ export const GlobalProvider = ({ children }) => {
         user_id: user.id,
         title: goal.title,
         target_amount: goal.target_amount,
+        deadline: goal.deadline, // ⭐ thêm dòng này
       })
       .select()
       .single();
@@ -199,7 +200,6 @@ export const GlobalProvider = ({ children }) => {
       payload: data,
     });
   };
-
   /*
   ==========================
   DELETE GOAL

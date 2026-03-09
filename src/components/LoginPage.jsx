@@ -45,26 +45,7 @@ const LoginPage = () => {
 
     try {
       await login(email, password);
-
-      toast.success("HỆ THỐNG PHÊ DUYỆT ĐĂNG NHẬP!", {
-        icon: "✅",
-        duration: 200,
-        style: {
-          borderRadius: "12px",
-          fontSize: "12px",
-          fontWeight: "bold",
-          background: theme === "dark" ? "#1e293b" : "#ffffff",
-          color: theme === "dark" ? "#f8fafc" : "#0f172a",
-          border:
-            theme === "dark"
-              ? "1px solid rgba(255,255,255,0.1)"
-              : "2px solid #0f172a",
-        },
-      });
-
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 200);
+      await login(email, password);
     } catch (err) {
       // LOG LỖI THẬT TRONG CONSOLE
       console.error("LOGIN ERROR:", err);
@@ -187,7 +168,7 @@ const LoginPage = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 // Border-2 và text-slate-950 để cực đậm ở Light mode
-                className="w-full p-4 pl-12 text-[13px] font-bold border-2 outline-none bg-slate-50 dark:bg-slate-800/50 border-slate-400 dark:border-slate-800 rounded-2xl focus:border-primary text-slate-950 dark:text-white transition-all placeholder:text-slate-500"
+                className="w-full p-4 pl-12 text-[12px] font-bold outline-none bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-2xl focus:border-primary text-slate-950 dark:text-white transition-all placeholder:text-slate-500"
               />
             </div>
           </div>
@@ -208,7 +189,7 @@ const LoginPage = () => {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-4 pl-12 pr-12 text-[13px] font-bold border-2 outline-none bg-slate-50 dark:bg-slate-800/50 border-slate-400 dark:border-slate-800 rounded-2xl focus:border-primary text-slate-950 dark:text-white transition-all placeholder:text-slate-500"
+                className="w-full p-4 pl-12 pr-12 text-[12px] font-bold outline-none bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-2xl focus:border-primary text-slate-950 dark:text-white transition-all placeholder:text-slate-500"
               />
 
               <button

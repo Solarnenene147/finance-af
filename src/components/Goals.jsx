@@ -272,9 +272,11 @@ const Goals = () => {
                   </p>
                   <p className="flex items-center gap-2 text-base font-bold text-textMain">
                     <FaCalendarDay className="text-sm text-primary" />{" "}
-                    {new Date(selectedGoal.deadline).toLocaleDateString(
-                      "vi-VN",
-                    )}
+                    {selectedGoal.deadline
+                      ? new Date(selectedGoal.deadline).toLocaleDateString(
+                          "vi-VN",
+                        )
+                      : "Chưa đặt"}
                   </p>
                 </div>
                 <div className="pt-5 mt-2 border-t border-white/5">
@@ -432,7 +434,7 @@ const Goals = () => {
                     onChange={(e) =>
                       setNewGoal({ ...newGoal, title: e.target.value })
                     }
-                    className="w-full p-4 font-bold transition-all border outline-none bg-background border-slate-800 rounded-2xl focus:border-primary text-textMain"
+                    className="w-full p-4 font-bold transition-all border outline-none bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 rounded-2xl focus:border-primary text-textMain dark:text-white"
                   />
                 </div>
                 <div className="space-y-2">
@@ -447,7 +449,7 @@ const Goals = () => {
                     onChange={(e) =>
                       setNewGoal({ ...newGoal, target: e.target.value })
                     }
-                    className="w-full p-4 font-bold transition-all border outline-none bg-background border-slate-800 rounded-2xl focus:border-primary text-textMain"
+                    className="w-full p-4 font-bold transition-all border outline-none bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 rounded-2xl focus:border-primary text-textMain dark:text-white"
                   />
                 </div>
                 <div className="space-y-2">
@@ -462,7 +464,7 @@ const Goals = () => {
                     onChange={(e) =>
                       setNewGoal({ ...newGoal, deadline: e.target.value })
                     }
-                    className="w-full p-4 font-bold bg-background border border-slate-800 rounded-2xl focus:border-primary text-textMain outline-none transition-all [&::-webkit-calendar-picker-indicator]:dark:invert"
+                    className="w-full p-4 font-bold bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl focus:border-primary text-textMain dark:text-white outline-none transition-all [&::-webkit-calendar-picker-indicator]:dark:invert"
                   />
                 </div>
                 <button

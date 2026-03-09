@@ -97,6 +97,7 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
     setIsVerifying(true);
     try {
       await verifyIdentity(confirmPassword);
+
       const { error } = await supabase
         .from("profiles")
         .update({
@@ -108,11 +109,12 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
         .eq("id", user.id);
 
       if (error) throw error;
-      setInitialData({ ...userData });
-      setHasChanges(false);
-      setIsPasswordModalOpen(false);
-      setConfirmPassword("");
+
       showStatus("success", "Cập nhật thông tin hồ sơ thành công.");
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 800);
     } catch (error) {
       showStatus("error", error.message);
     } finally {
@@ -376,7 +378,7 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
                         onChange={(e) =>
                           setUserData({ ...userData, fullName: e.target.value })
                         }
-                        className="w-full p-4 text-[12px] font-bold border-2 outline-none border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 rounded-2xl focus:border-primary dark:text-white"
+                        className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-[12px] font-bold outline-none focus:border-primary dark:text-white transition-all"
                       />
                     </div>
                     <div className="space-y-2">
@@ -386,7 +388,7 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
                       <input
                         value={userData.email}
                         disabled
-                        className="w-full p-4 text-[12px] font-bold border-2 bg-slate-100 dark:bg-slate-800/50 text-slate-400 rounded-2xl cursor-not-allowed border-transparent"
+                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-[12px] font-bold outline-none dark:text-white transition-all cursor-not-allowed"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-6 font-bold">
@@ -400,7 +402,7 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
                           onChange={(e) =>
                             setUserData({ ...userData, phone: e.target.value })
                           }
-                          className="w-full p-4 text-[12px] font-bold border-2 border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 rounded-2xl focus:border-primary dark:text-white"
+                          className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-[12px] font-bold outline-none focus:border-primary dark:text-white transition-all"
                         />
                       </div>
                       <div className="space-y-2">
@@ -413,7 +415,7 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
                           onChange={(e) =>
                             setUserData({ ...userData, dob: e.target.value })
                           }
-                          className="w-full p-4 text-[12px] font-bold border-2 border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 rounded-2xl focus:border-primary dark:text-white"
+                          className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-[12px] font-bold outline-none focus:border-primary dark:text-white transition-all"
                         />
                       </div>
                     </div>
@@ -464,7 +466,7 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
                             currentPassword: e.target.value,
                           })
                         }
-                        className="w-full p-4 text-[12px] font-bold border-2 outline-none border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 rounded-2xl focus:border-primary dark:text-white"
+                        className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-[12px] font-bold outline-none focus:border-primary dark:text-white transition-all"
                       />
                     </div>
                     <div className="space-y-2">
@@ -481,7 +483,7 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
                             newPassword: e.target.value,
                           })
                         }
-                        className="w-full p-4 text-[12px] font-bold border-2 outline-none border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 rounded-2xl focus:border-primary dark:text-white"
+                        className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-[12px] font-bold outline-none focus:border-primary dark:text-white transition-all"
                       />
                     </div>
                     <div className="space-y-2">
@@ -498,14 +500,19 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
                             confirmPassword: e.target.value,
                           })
                         }
-                        className="w-full p-4 text-[12px] font-bold border-2 outline-none border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 rounded-2xl focus:border-primary dark:text-white"
+                        className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-[12px] font-bold outline-none focus:border-primary dark:text-white transition-all"
                       />
                     </div>
                     <button
                       onClick={handleUpdatePassword}
-                      className="w-full py-4 bg-primary text-white font-bold text-[12px] uppercase rounded-2xl shadow-xl mt-4 transition-all active:scale-95"
+                      disabled={isVerifying}
+                      className="w-full py-4 bg-primary text-white font-bold text-[12px] uppercase rounded-2xl shadow-xl mt-4 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Cập nhật mật khẩu
+                      {isVerifying ? (
+                        <FaSpinner className="mx-auto animate-spin" />
+                      ) : (
+                        "Cập nhật mật khẩu"
+                      )}
                     </button>
                   </div>
                 </div>
@@ -588,21 +595,26 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
                   Phê duyệt lệnh
                 </h3>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-8 leading-relaxed">
-                  Vui lòng cung cấp mật mã xác thực quyền quản trị
+                  Nhập mật khẩu để xác thực thay đổi
                 </p>
                 <input
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full p-4 mb-6 text-[12px] font-bold tracking-widest text-center border-2 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-2xl focus:border-primary dark:text-white outline-none"
+                  className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-[12px] font-bold outline-none focus:border-primary dark:text-white transition-all"
                 />
                 <div className="flex flex-col gap-2 font-bold">
                   <button
                     onClick={handleSyncProfile}
-                    className="w-full py-4 bg-primary text-white font-bold text-[12px] uppercase rounded-xl shadow-lg active:scale-95 transition-all"
+                    disabled={isVerifying}
+                    className="w-full py-4 bg-primary text-white font-bold text-[12px] uppercase rounded-xl shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Xác thực thực thi
+                    {isVerifying ? (
+                      <FaSpinner className="mx-auto animate-spin" />
+                    ) : (
+                      "Xác nhận"
+                    )}
                   </button>
                   <button
                     onClick={() => {
@@ -611,7 +623,7 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
                     }}
                     className="w-full py-2 text-[12px] font-bold uppercase text-slate-400"
                   >
-                    Hủy yêu cầu
+                    Hủy
                   </button>
                 </div>
               </motion.div>
@@ -650,7 +662,7 @@ const SettingsOverlay = ({ isOpen, onClose }) => {
                   value={deletePassword}
                   onChange={(e) => setDeletePassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full p-4 mb-6 text-[12px] font-bold tracking-widest text-center border-2 bg-slate-50 dark:bg-slate-800 border-expense/20 rounded-2xl focus:border-expense dark:text-white outline-none"
+                  className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl text-[12px] font-bold outline-none focus:border-primary dark:text-white transition-all"
                 />
                 <div className="flex flex-col gap-3 font-bold">
                   <button
