@@ -1,51 +1,74 @@
-# 🔱 AF Finance - Wealth Management System
+cat << 'EOF' > README.md
+# 🚀 AF Finance Web - Quản Lý Tài Chính Cá Nhân Thông Minh
 
-![Banner](https://img.shields.io/badge/Status-Gigachad_Mode-brightgreen?style=for-the-badge&logo=react)
-![Backend](https://img.shields.io/badge/Backend-Node.js_Express-blue?style=for-the-badge&logo=node.js)
-![Database](https://img.shields.io/badge/Database-MongoDB-green?style=for-the-badge&logo=mongodb)
+<div align="center">
 
-> **AF Finance** không chỉ là một ứng dụng quản lý tài chính. Đây là hệ điều hành giúp các "Chad" làm chủ dòng tiền, kỷ luật chi tiêu và chinh phục các mục tiêu tài chính vĩ đại.
+**Giải pháp kiểm soát dòng tiền tối ưu trên nền tảng Web. Hiện đại - Bảo mật - Tốc độ.**
 
----
+[![Vercel Status](https://img.shields.io/badge/Vercel-Deployed-success?style=for-the-badge&logo=vercel)](https://finance-af.vercel.app/)
+[![React](https://img.shields.io/badge/ReactJS-Library-61DAFB?style=for-the-badge&logo=react)](https://react.dev/)
+[![Supabase](https://img.shields.io/badge/Supabase-Backend-blue?style=for-the-badge&logo=supabase)](https://supabase.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-Styling-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 
-## ⚡ Tính Năng Thực Chiến
+👉 **[TRUY CẬP ỨNG DỤNG TẠI ĐÂY](https://finance-af.vercel.app/)**
 
-- **Dashboard Command Center**: Tổng quan tài sản với biểu đồ Pie Chart nổi khối, tương tác cực nhạy.
-- **Transactions Log**: Ghi chép thu chi thần tốc, đồng bộ trực tiếp với Backend.
-- **Financial Goals**: Thiết lập mục tiêu, theo dõi tiến độ "tích lúa" với thanh Progress bar thời gian thực.
-- **Ultra Dark/Light Mode**: Giao diện tối thượng, bảo vệ mắt nhưng vẫn cực kỳ sang trọng.
-- **Secure Auth**: Hệ thống đăng nhập/đăng ký chuẩn mực, bảo vệ bí mật tài chính tuyệt đối.
+</div>
 
 ---
 
-## 🛠 Tech Stack (Vũ Khí Sử Dụng)
+## ✨ Tính Năng Bản Web
 
-| Frontend         | Backend     | Công Cụ                           |
-| :--------------- | :---------- | :-------------------------------- |
-| **React 18**     | **Node.js** | **Axios** (API)                   |
-| **Tailwind CSS** | **Express** | **Framer Motion** (Animation)     |
-| **Recharts**     | **MongoDB** | **React Router DOM** (Navigation) |
-
-[Image of MERN stack architecture diagram]
+* 📈 **Dashboard Trực Quan:** Theo dõi tổng tài sản và biến động thu chi qua biểu đồ thời gian thực.
+* 💸 **Ghi Chép Siêu Tốc:** Giao diện tối ưu hóa cho trình duyệt, giúp nhập liệu giao dịch chỉ trong vài giây.
+* 🌗 **Chế Độ Giao Diện:** Hỗ trợ Light/Dark Mode thông minh, bảo vệ mắt và tăng tính thẩm mỹ.
+* 🔐 **Bảo Mật Tuyệt Đối:** Hệ thống xác thực mạnh mẽ từ Supabase Auth, bảo vệ dữ liệu tài khoản cá nhân.
+* 📸 **Smart Avatar:** Tự động tạo ảnh đại diện chuyên nghiệp dựa trên tên người dùng khi chưa có ảnh.
 
 ---
 
-## 🚀 Bắt Đầu Ngay (Installation)
+## 🛠️ Công Nghệ Phát Triển
 
-### 1. Yêu cầu hệ thống
+| Thành phần | Công nghệ |
+| :--- | :--- |
+| **Framework** | React.js  |
+| **Styling** | Tailwind CSS / Framer Motion |
+| **Database** | PostgreSQL (via Supabase) |
+| **Authentication** | Supabase Auth |
+| **Hosting** | Vercel |
 
-- Node.js (Phiên bản v16 trở lên)
-- MongoDB (Chạy cục bộ hoặc Atlas)
+---
 
-### 2. Cài đặt Frontend
+## 🚀 Hướng Dẫn Chạy Cục Bộ (Local)
 
-```bash
-# Di chuyển vào thư mục client
-cd client
+Dành cho các bro muốn tìm hiểu và phát triển thêm:
 
-# Cài đặt các gói steroid cho code
-npm install
+1. **Clone dự án:**
+   ```bash
+   git clone [https://github.com/phuoc-af/AF-Finance-Web.git](https://github.com/phuoc-af/AF-Finance-Web.git)
+   ```
+2. **Cài đặt dependencies:**
+    ```bash 
+   npm install
+    ```
+3. **Thiết lập biến môi trường (.env.local):**
+    ```bash
+    NEXT_PUBLIC_SUPABASE_URL=your_project_url
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+    ```
+4. **Khởi chạy:**
+    ```bash
+    npm run dev
+    ```
+---
 
-# Khởi động hệ thống
-npm run dev
-```
+## 🌐 Thông Tin Liên Hệ
+
+Mọi thắc mắc, góp ý hoặc hợp tác phát triển dự án, các bro vui lòng liên hệ với mình qua các kênh sau:
+
+* 📧 **Email:** [hmf.forwork@gmail.com](mailto:hmf.forwork@gmail.com)
+* 🔵 **Facebook:** [Minh Phước](https://www.facebook.com/hikami.hiryuu.147/) 
+
+---
+<div align="center">
+Made by <b>Huỳnh Minh Phước</b>.
+</div>
